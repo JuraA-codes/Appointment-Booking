@@ -1,0 +1,334 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Book an Appointment | Reflect Aesthetics</title>
+<style>
+  :root{
+    --sage:#7f9a84; --sage-dark:#5f7a65; --sage-soft:#eef3ee;
+    --charcoal:#2f3432; --bronze:#a67c52; --line:#d9e0da; --bg:#f7f8f5;
+    --err:#b3433b; --radius:12px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--charcoal);line-height:1.5}
+  header{background:var(--charcoal);color:#fff;text-align:center;padding:36px 16px 30px}
+  header h1{margin:0;font-weight:600;letter-spacing:.08em;font-size:1.6rem}
+  header p{margin:6px 0 0;color:var(--bronze);font-style:italic}
+  main{max-width:680px;margin:-18px auto 48px;padding:0 16px}
+  form,.done{background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:26px 22px;box-shadow:0 6px 22px rgba(47,52,50,.06)}
+  h2{font-size:1rem;margin:26px 0 12px;color:var(--sage-dark);text-transform:uppercase;letter-spacing:.07em}
+  h2:first-child{margin-top:0}
+  .row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  @media(max-width:560px){.row{grid-template-columns:1fr}}
+  label{display:block;font-size:.88rem;font-weight:600;margin-bottom:5px}
+  .field{margin-bottom:14px}
+  input,select,textarea{width:100%;font:inherit;padding:11px 12px;border:1px solid var(--line);border-radius:8px;background:#fff;color:inherit}
+  input:focus,select:focus,textarea:focus{outline:2px solid var(--sage);border-color:var(--sage)}
+  textarea{min-height:84px;resize:vertical}
+  .req::after{content:" *";color:var(--bronze)}
+  .err{display:none;color:var(--err);font-size:.8rem;margin-top:4px}
+  .field.bad .err{display:block}
+  .field.bad input,.field.bad select{border-color:var(--err)}
+  .seg{display:flex;gap:10px}
+  .seg label{flex:1;margin:0;font-weight:500;border:1px solid var(--line);border-radius:8px;padding:10px;text-align:center;cursor:pointer}
+  .seg input{display:none}
+  .seg input:checked+span{color:var(--sage-dark);font-weight:700}
+  .seg label:has(input:checked){background:var(--sage-soft);border-color:var(--sage)}
+  .slots{display:grid;grid-template-columns:repeat(auto-fill,minmax(92px,1fr));gap:8px}
+  .slot{border:1px solid var(--line);background:#fff;border-radius:8px;padding:9px 4px;font:inherit;font-size:.9rem;cursor:pointer;color:inherit}
+  .slot:hover:not(:disabled){border-color:var(--sage)}
+  .slot.sel{background:var(--sage);border-color:var(--sage);color:#fff;font-weight:600}
+  .slot:disabled{background:#f1f1ef;color:#aaa;text-decoration:line-through;cursor:not-allowed}
+  .hint{font-size:.82rem;color:#6b726d;margin:6px 0 0}
+  .check{display:flex;gap:10px;align-items:flex-start;font-size:.88rem;margin:6px 0 18px}
+  .check input{width:auto;margin-top:4px}
+  button.submit{width:100%;background:var(--sage-dark);color:#fff;border:0;border-radius:10px;padding:14px;font:inherit;font-weight:600;font-size:1rem;cursor:pointer}
+  button.submit:hover:not(:disabled){background:var(--charcoal)}
+  button.submit:disabled{opacity:.6;cursor:wait}
+  .banner{display:none;background:#fbeceb;border:1px solid #e8b9b5;color:var(--err);padding:11px 13px;border-radius:8px;margin-bottom:16px;font-size:.9rem}
+  .demo{background:#fff6e8;border:1px solid #ecd2a6;color:#7a5a1f;padding:9px 12px;border-radius:8px;font-size:.82rem;margin-bottom:16px;display:none}
+  .done{display:none;text-align:center;padding:44px 24px}
+  .done .tick{width:60px;height:60px;border-radius:50%;background:var(--sage-soft);color:var(--sage-dark);display:grid;place-items:center;font-size:30px;margin:0 auto 14px}
+  .done dl{display:inline-block;text-align:left;margin:16px 0 0;font-size:.95rem}
+  .done dt{font-weight:600;color:var(--sage-dark);font-size:.8rem;text-transform:uppercase;letter-spacing:.05em}
+  .done dd{margin:0 0 8px}
+  .hp{position:absolute;left:-9999px}
+</style>
+</head>
+<body>
+<header>
+  <h1>REFLECT AESTHETICS</h1>
+  <p>Refined in every reflection</p>
+</header>
+
+<main>
+  <form id="form" novalidate>
+    <div class="demo" id="demo">NOT CONNECTED: Supabase isn't configured yet, so requests are NOT saved. Set <code>SUPABASE_URL</code> and <code>SUPABASE_ANON_KEY</code> in the script.</div>
+    <div class="banner" id="banner" role="alert"></div>
+
+    <h2>Your details</h2>
+    <div class="row">
+      <div class="field"><label class="req" for="first">First name</label><input id="first" autocomplete="given-name" required><div class="err">Please enter your first name.</div></div>
+      <div class="field"><label class="req" for="last">Last name</label><input id="last" autocomplete="family-name" required><div class="err">Please enter your last name.</div></div>
+    </div>
+    <div class="row">
+      <div class="field"><label class="req" for="phone">Mobile number</label><input id="phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="09XX XXX XXXX" required><div class="err">Enter a valid PH mobile number (e.g. 09171234567).</div></div>
+      <div class="field"><label for="email">Email <span style="font-weight:400">(optional)</span></label><input id="email" type="email" autocomplete="email"><div class="err">Please enter a valid email.</div></div>
+    </div>
+    <div class="field">
+      <label>Have you visited us before?</label>
+      <div class="seg">
+        <label><input type="radio" name="ptype" value="new" checked><span>First visit</span></label>
+        <label><input type="radio" name="ptype" value="returning"><span>Returning patient</span></label>
+      </div>
+    </div>
+
+    <h2>Appointment</h2>
+    <div class="field">
+      <label class="req" for="service">Service</label>
+      <select id="service" required><option value="">Select a service…</option></select>
+      <p class="hint" id="svcHint"></p>
+      <div class="err">Please choose a service.</div>
+    </div>
+    <div class="field">
+      <label class="req" for="date">Preferred date</label>
+      <input id="date" type="date" required>
+      <div class="err" id="dateErr">Please pick an available date.</div>
+    </div>
+    <div class="field" id="slotField">
+      <label class="req">Preferred time</label>
+      <div class="slots" id="slots"></div>
+      <p class="hint" id="slotHint">Choose a date to see available times.</p>
+      <div class="err">Please select a time.</div>
+    </div>
+    <div class="field">
+      <label for="notes">Notes <span style="font-weight:400">(allergies, concerns, questions)</span></label>
+      <textarea id="notes" maxlength="500"></textarea>
+    </div>
+
+    <input class="hp" id="website" tabindex="-1" autocomplete="off" aria-hidden="true">
+
+    <label class="check"><input type="checkbox" id="consent" required>
+      <span>I agree to be contacted by the clinic to confirm this appointment and that my details may be stored for that purpose.</span></label>
+    <div class="field" id="consentField"><div class="err">Please accept to continue.</div></div>
+
+    <button class="submit" id="submitBtn" type="submit">Request appointment</button>
+    <p class="hint" style="text-align:center;margin-top:12px">Your request is pending until the clinic confirms it by call, text or email.</p>
+  </form>
+
+  <section class="done" id="done" aria-live="polite">
+    <div class="tick">✓</div>
+    <h2 style="margin:0;color:var(--charcoal);font-size:1.3rem;text-transform:none;letter-spacing:0">Request received</h2>
+    <p style="margin:6px 0 0">Thank you, <span id="dName"></span>. We'll contact you shortly to confirm.</p>
+    <dl>
+      <dt>Service</dt><dd id="dService"></dd>
+      <dt>Date &amp; time</dt><dd id="dWhen"></dd>
+    </dl>
+    <p><button class="slot" id="again" type="button" style="padding:10px 18px">Book another</button></p>
+  </section>
+</main>
+
+<script>
+/* ============ CONFIG: edit these ============ */
+const CONFIG = {
+  SUPABASE_URL: "https://nocmagrzmomrewsxxjjp.supabase.co",        // e.g. https://xxxx.supabase.co
+  SUPABASE_ANON_KEY: "sb_publishable_4zDCgn2zsMJ5VzxYTnJi-A_PfGQ9cw-",   // the public "anon" key (never the service_role key)
+  TABLE: "booking_requests",
+  // Used only if the clinic app has not published its treatments yet.
+  // Normally the list is loaded live from the clinic app (Treatments screen).
+  SERVICES: [
+    "Consultation",
+    "Facial / Skin Treatment",
+    "Chemical Peel",
+    "Laser Treatment",
+    "Botox / Fillers",
+    "Whitening",
+    "Slimming / Body Contouring",
+    "Other"
+  ],
+  OPEN_HOUR: 9,          // first slot
+  CLOSE_HOUR: 17,        // last slot ends here
+  SLOT_MINUTES: 60,
+  CLOSED_WEEKDAYS: [0],  // 0 = Sunday ... 6 = Saturday
+  MAX_DAYS_AHEAD: 60
+};
+/* ============================================ */
+
+const $ = id => document.getElementById(id);
+const configured = CONFIG.SUPABASE_URL && CONFIG.SUPABASE_ANON_KEY;
+// tolerate pasted paths such as ".../rest/v1/": keep only the project address
+const BASE = (() => { try { return new URL(CONFIG.SUPABASE_URL).origin; } catch(e){ return CONFIG.SUPABASE_URL; } })();
+let selectedTime = null;
+
+if(!configured) $("demo").style.display = "block";
+let serviceInfo = {};
+function fillServices(list){
+  const sel = $("service"), keep = sel.value;
+  sel.length = 1;
+  list.forEach(s => sel.add(new Option(s.name, s.name)));
+  serviceInfo = Object.fromEntries(list.map(s => [s.name, s.description || ""]));
+  if(keep && serviceInfo[keep] !== undefined) sel.value = keep;
+}
+fillServices(CONFIG.SERVICES.map(name => ({name})));
+$("service").addEventListener("change", () => { $("svcHint").textContent = serviceInfo[$("service").value] || ""; });
+
+// date limits
+const pad = n => String(n).padStart(2,"0");
+const iso = d => `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+const tomorrow = new Date(); tomorrow.setDate(tomorrow.getDate()+1);
+const maxDate = new Date(); maxDate.setDate(maxDate.getDate()+CONFIG.MAX_DAYS_AHEAD);
+$("date").min = iso(tomorrow); $("date").max = iso(maxDate);
+
+function allSlots(){
+  const out=[]; 
+  for(let m=CONFIG.OPEN_HOUR*60; m+CONFIG.SLOT_MINUTES<=CONFIG.CLOSE_HOUR*60; m+=CONFIG.SLOT_MINUTES)
+    out.push(`${pad(Math.floor(m/60))}:${pad(m%60)}`);
+  return out;
+}
+const label = t => { const [h,m]=t.split(":").map(Number); return `${h%12||12}:${pad(m)} ${h<12?"AM":"PM"}`; };
+
+async function api(path, body){
+  const res = await fetch(BASE + path, {
+    method:"POST",
+    headers:{
+      "apikey":CONFIG.SUPABASE_ANON_KEY,
+      "Authorization":"Bearer "+CONFIG.SUPABASE_ANON_KEY,
+      "Content-Type":"application/json",
+      "Prefer":"return=minimal"
+    },
+    body:JSON.stringify(body)
+  });
+  return res;
+}
+
+function authHeaders(){
+  return {"apikey":CONFIG.SUPABASE_ANON_KEY,"Authorization":"Bearer "+CONFIG.SUPABASE_ANON_KEY};
+}
+
+// Real services come from the clinic app's Treatments list.
+async function loadServices(){
+  if(!configured) return;
+  try{
+    const r = await fetch(BASE + "/rest/v1/online_services?select=name,description&order=sort_order.asc", {headers: authHeaders()});
+    if(!r.ok) return;
+    const rows = await r.json();
+    if(Array.isArray(rows) && rows.length) fillServices(rows);
+  }catch(e){ /* keep the built-in list */ }
+}
+loadServices();
+
+const toMinutes = t => { const [h,m] = t.split(":").map(Number); return h*60 + m; };
+
+async function loadSlots(){
+  selectedTime = null;
+  const val = $("date").value, box = $("slots");
+  box.innerHTML = "";
+  $("dateErr").textContent = "Please pick an available date.";
+  $("date").closest(".field").classList.remove("bad");
+  if(!val){ $("slotHint").textContent="Choose a date to see available times."; return; }
+
+  const day = new Date(val+"T00:00").getDay();
+  if(CONFIG.CLOSED_WEEKDAYS.includes(day)){
+    $("dateErr").textContent = "The clinic is closed on this day. Please choose another date.";
+    $("date").closest(".field").classList.add("bad");
+    $("slotHint").textContent=""; return;
+  }
+
+  let taken = [];
+  if(configured){
+    try{
+      const r = await api("/rest/v1/rpc/get_booked_slots",{p_date:val});
+      if(r.ok) taken = (await r.json()).map(x => toMinutes(x.slot));
+    }catch(e){ /* fall back to showing all; server still blocks double booking */ }
+  }
+  allSlots().forEach(t=>{
+    const b = document.createElement("button");
+    b.type="button"; b.className="slot"; b.textContent=label(t); b.dataset.t=t;
+    // a slot is taken if anything already starts inside its time window
+    const start = toMinutes(t);
+    if(taken.some(m => m >= start && m < start + CONFIG.SLOT_MINUTES)) b.disabled = true;
+    b.onclick = () => {
+      selectedTime = t;
+      box.querySelectorAll(".slot").forEach(x=>x.classList.toggle("sel", x===b));
+      $("slotField").classList.remove("bad");
+    };
+    box.appendChild(b);
+  });
+  const free = box.querySelectorAll(".slot:not(:disabled)").length;
+  $("slotHint").textContent = free ? "Greyed-out times are already taken." : "No times left on this day. Please try another date.";
+}
+$("date").addEventListener("change", loadSlots);
+
+function setBad(el, bad){ el.closest(".field").classList.toggle("bad", bad); return !bad; }
+
+function validate(){
+  let ok = true;
+  ok &= setBad($("first"), !$("first").value.trim());
+  ok &= setBad($("last"), !$("last").value.trim());
+  const phone = $("phone").value.replace(/[\s\-()]/g,"");
+  ok &= setBad($("phone"), !/^(\+63|63|0)9\d{9}$/.test(phone));
+  const email = $("email").value.trim();
+  ok &= setBad($("email"), email && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email));
+  ok &= setBad($("service"), !$("service").value);
+  ok &= setBad($("date"), !$("date").value || CONFIG.CLOSED_WEEKDAYS.includes(new Date($("date").value+"T00:00").getDay()));
+  ok &= setBad($("slotField").querySelector(".slots"), !selectedTime);
+  $("consentField").classList.toggle("bad", !$("consent").checked);
+  ok &= $("consent").checked;
+  return !!ok;
+}
+
+// normalise to 09XXXXXXXXX
+const normPhone = p => { p=p.replace(/[\s\-()]/g,""); return p.replace(/^(\+63|63)/,"0"); };
+
+$("form").addEventListener("submit", async e=>{
+  e.preventDefault();
+  $("banner").style.display="none";
+  if($("website").value) return;          // honeypot: bots only
+  if(!validate()){ document.querySelector(".bad")?.scrollIntoView({behavior:"smooth",block:"center"}); return; }
+
+  const payload = {
+    first_name: $("first").value.trim(),
+    last_name: $("last").value.trim(),
+    phone: normPhone($("phone").value),
+    email: $("email").value.trim() || null,
+    patient_type: document.querySelector("input[name=ptype]:checked").value,
+    service: $("service").value,
+    preferred_date: $("date").value,
+    preferred_time: selectedTime + ":00",
+    notes: $("notes").value.trim() || null,
+    status: "pending"
+  };
+
+  const btn = $("submitBtn"); btn.disabled = true; btn.textContent = "Sending…";
+  try{
+    if(!configured){
+      throw new Error("This form is not connected to the clinic yet, so nothing was sent. The site owner must fill in SUPABASE_URL and SUPABASE_ANON_KEY in this file.");
+    }
+    {
+      const res = await api(`/rest/v1/${CONFIG.TABLE}`, payload);
+      if(res.status === 409){ throw new Error("That time was just taken. Please choose another slot."); }
+      if(!res.ok){
+        const body = await res.text().catch(() => "");
+        if(/too many/i.test(body)) throw new Error("This number already has several pending requests. Please wait for the clinic to contact you, or call us.");
+        throw new Error("Something went wrong on our side. Please try again or call the clinic.");
+      }
+    }
+    $("dName").textContent = payload.first_name;
+    $("dService").textContent = payload.service;
+    $("dWhen").textContent = new Date(payload.preferred_date+"T00:00").toLocaleDateString("en-PH",{weekday:"long",year:"numeric",month:"long",day:"numeric"}) + " at " + label(selectedTime);
+    $("form").style.display="none"; $("done").style.display="block"; window.scrollTo({top:0,behavior:"smooth"});
+  }catch(err){
+    $("banner").textContent = err.message || "Network error. Please try again.";
+    $("banner").style.display="block";
+    if(/taken/.test(err.message)) loadSlots();
+    $("banner").scrollIntoView({behavior:"smooth",block:"center"});
+  }finally{
+    btn.disabled=false; btn.textContent="Request appointment";
+  }
+});
+
+$("again").onclick = () => { $("form").reset(); $("svcHint").textContent=""; $("slots").innerHTML=""; selectedTime=null; $("slotHint").textContent="Choose a date to see available times."; $("done").style.display="none"; $("form").style.display="block"; };
+</script>
+</body>
+</html>
