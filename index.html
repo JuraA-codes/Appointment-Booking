@@ -3,131 +3,267 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#2A2E2B">
 <title>Book an Appointment | Reflect Aesthetics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
   :root{
-    --sage:#7f9a84; --sage-dark:#5f7a65; --sage-soft:#eef3ee;
-    --charcoal:#2f3432; --bronze:#a67c52; --line:#d9e0da; --bg:#f7f8f5;
-    --err:#b3433b; --radius:12px;
+    --night:#2A2E2B; --forest:#455143; --sage:#7D8C78; --sage-deep:#5B6B57;
+    --sage-soft:#E3E9E0; --mist:#F1F4EF; --ink:#1F2522; --muted:#6A726A;
+    --bronze:#A67C52; --bronze-light:#D9BC95; --champagne:#EBD9BC;
+    --cream:#F8F6F2; --line:#E4E7E0; --field-line:#D5DBD1; --err:#B4483E;
+    --font:"Jost","Segoe UI Variable","Segoe UI","Helvetica Neue",Roboto,Arial,sans-serif;
   }
   *{box-sizing:border-box}
-  body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--charcoal);line-height:1.5}
-  header{background:var(--charcoal);color:#fff;text-align:center;padding:36px 16px 30px}
-  header h1{margin:0;font-weight:600;letter-spacing:.08em;font-size:1.6rem}
-  header p{margin:6px 0 0;color:var(--bronze);font-style:italic}
-  main{max-width:680px;margin:-18px auto 48px;padding:0 16px}
-  form,.done{background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:26px 22px;box-shadow:0 6px 22px rgba(47,52,50,.06)}
-  h2{font-size:1rem;margin:26px 0 12px;color:var(--sage-dark);text-transform:uppercase;letter-spacing:.07em}
-  h2:first-child{margin-top:0}
+  html{scroll-behavior:smooth}
+  body{margin:0;font-family:var(--font);font-weight:300;background:var(--cream);color:var(--ink);line-height:1.6;-webkit-font-smoothing:antialiased}
+  a{color:inherit}
+  .skip{position:absolute;left:-9999px;top:8px;background:#fff;color:var(--ink);padding:8px 14px;border-radius:20px;z-index:10}
+  .skip:focus{left:8px}
+
+  /* ---------- page frame: dark story panel + light form ---------- */
+  .shell{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);min-height:100vh}
+  @media(max-width:959px){.shell{display:block}}
+
+  aside.story{
+    position:relative;overflow:hidden;color:#fff;
+    background:linear-gradient(160deg,#363D37 0%,var(--night) 48%,#222622 100%);
+    padding:56px 48px 40px;display:flex;flex-direction:column;
+  }
+  @media(min-width:960px){aside.story{position:sticky;top:0;height:100vh;overflow-y:auto;padding-right:120px}}
+  @media(max-width:959px){aside.story{padding:40px 22px 56px}}
+  /* soft mirror panels, like the lobby mirror */
+  aside.story::before,aside.story::after{content:"";position:absolute;top:0;bottom:0;pointer-events:none;
+    background:linear-gradient(135deg,rgba(255,255,255,.07),rgba(255,255,255,.01));
+    border-left:1px solid rgba(255,255,255,.10);border-right:1px solid rgba(255,255,255,.10)}
+  aside.story::before{right:64px;width:46px}
+  aside.story::after{right:20px;width:22px;opacity:.7}
+  @media(max-width:959px){aside.story::before,aside.story::after{display:none}}
+  aside.story>*{position:relative;z-index:1}
+
+  /* wordmark: REF + L + mirrored E C + T, with a faint water reflection */
+  .wm-wrap{display:inline-block}
+  .wm{display:flex;gap:.26em;font-size:clamp(2rem,3.4vw,2.7rem);font-weight:300;line-height:1;color:#fff;letter-spacing:0}
+  .wm .s{color:#A9B8A4}
+  .wm .l{color:#A9B8A4;font-weight:400}
+  .wm .m{display:inline-block;transform:scaleX(-1);color:#A9B8A4}
+  .wm.refl{transform:scaleY(-1);height:.62em;overflow:hidden;margin-top:.1em;opacity:.38;
+    -webkit-mask-image:linear-gradient(to bottom,transparent 0%,#000 100%);mask-image:linear-gradient(to bottom,transparent 0%,#000 100%)}
+  .wm.refl>*{transform-origin:center}
+  .wm.refl .m{transform:scaleX(-1)}
+  .lockup{margin-bottom:48px}
+  .lockup .sub{display:flex;align-items:center;gap:14px;margin-top:16px;font-size:.74rem;letter-spacing:.5em;text-transform:uppercase;font-weight:400}
+  .lockup .sub::before,.lockup .sub::after{content:"";width:32px;height:1px;background:var(--sage)}
+  .lockup .by{margin-top:10px;font-size:.6rem;letter-spacing:.42em;text-transform:uppercase;color:rgba(255,255,255,.55)}
+
+  .eyebrow{font-size:.7rem;letter-spacing:.32em;text-transform:uppercase;font-weight:500;color:var(--bronze-light)}
+  aside.story h1{margin:14px 0 18px;font-weight:300;font-size:clamp(2.1rem,3.6vw,3.2rem);line-height:1.12;letter-spacing:.01em}
+  aside.story h1 em{font-style:normal;color:var(--champagne)}
+  aside.story .lede{margin:0 0 30px;max-width:30em;color:rgba(255,255,255,.78);font-size:1rem}
+
+  .values{list-style:none;margin:0 0 34px;padding:0;display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .values li{border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.04);border-radius:14px;padding:12px 14px;font-size:.82rem;font-weight:400;letter-spacing:.02em;color:rgba(255,255,255,.88)}
+  .values li b{display:block;font-weight:500;font-size:.62rem;letter-spacing:.26em;color:var(--bronze-light);margin-bottom:2px}
+
+  .visit{margin-top:auto;padding-top:26px;border-top:1px solid rgba(255,255,255,.14);font-size:.88rem;color:rgba(255,255,255,.8)}
+  .visit h2{margin:0 0 10px;font-size:.7rem;letter-spacing:.32em;text-transform:uppercase;font-weight:500;color:var(--bronze-light)}
+  .visit p{margin:0 0 6px}
+  .visit a{text-decoration:none;border-bottom:1px solid rgba(255,255,255,.3)}
+  .visit a:hover{border-color:var(--champagne);color:var(--champagne)}
+  .visit .tag{margin-top:18px;font-size:.66rem;letter-spacing:.3em;text-transform:uppercase;color:var(--bronze-light);font-style:italic;font-weight:400}
+
+  /* ---------- form side ---------- */
+  main{padding:56px 48px 40px;display:flex;flex-direction:column;align-items:center}
+  @media(max-width:959px){main{padding:0 16px 36px;margin-top:-26px}}
+  .panel{width:100%;max-width:640px}
+  .intro{margin-bottom:26px}
+  @media(max-width:959px){.intro{display:none}}
+  .intro h2{margin:8px 0 6px;font-weight:300;font-size:1.9rem;letter-spacing:.02em}
+  .intro p{margin:0;color:var(--muted);font-size:.95rem}
+  .eyebrow.dark{color:var(--bronze)}
+
+  form,.done{background:#fff;border:1px solid var(--line);border-radius:26px;padding:34px 30px;box-shadow:0 14px 40px rgba(94,109,89,.10)}
+  @media(max-width:560px){form,.done{padding:26px 18px;border-radius:22px}}
+
+  .sec{display:flex;align-items:baseline;gap:12px;margin:34px 0 16px}
+  .sec.first{margin-top:0}
+  .sec .n{font-size:.72rem;letter-spacing:.2em;color:var(--bronze);font-weight:500}
+  .sec h3{margin:0;font-size:.74rem;letter-spacing:.3em;text-transform:uppercase;font-weight:500;color:var(--sage-deep)}
+  .sec::after{content:"";flex:1;height:1px;background:var(--line);align-self:center}
+
   .row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
   @media(max-width:560px){.row{grid-template-columns:1fr}}
-  label{display:block;font-size:.88rem;font-weight:600;margin-bottom:5px}
-  .field{margin-bottom:14px}
-  input,select,textarea{width:100%;font:inherit;padding:11px 12px;border:1px solid var(--line);border-radius:8px;background:#fff;color:inherit}
-  input:focus,select:focus,textarea:focus{outline:2px solid var(--sage);border-color:var(--sage)}
-  textarea{min-height:84px;resize:vertical}
+  label{display:block;font-size:.8rem;font-weight:500;letter-spacing:.04em;margin-bottom:6px;color:var(--ink)}
+  .field{margin-bottom:16px}
+  input,select,textarea{width:100%;font:inherit;font-weight:400;font-size:.98rem;padding:14px 16px;border:1px solid var(--field-line);border-radius:14px;background:var(--mist);color:var(--ink);transition:border-color .15s,box-shadow .15s,background .15s}
+  input::placeholder,textarea::placeholder{color:#9AA39A}
+  input:focus,select:focus,textarea:focus{outline:none;border-color:var(--sage-deep);background:#fff;box-shadow:0 0 0 3px rgba(125,140,120,.22)}
+  textarea{min-height:92px;resize:vertical}
   .req::after{content:" *";color:var(--bronze)}
-  .err{display:none;color:var(--err);font-size:.8rem;margin-top:4px}
+  .opt{font-weight:300;color:var(--muted)}
+  .err{display:none;color:var(--err);font-size:.8rem;margin-top:5px}
   .field.bad .err{display:block}
   .field.bad input,.field.bad select{border-color:var(--err)}
+  .field.bad .slots{outline:1px solid var(--err);outline-offset:4px;border-radius:14px}
+
   .seg{display:flex;gap:10px}
-  .seg label{flex:1;margin:0;font-weight:500;border:1px solid var(--line);border-radius:8px;padding:10px;text-align:center;cursor:pointer}
+  .seg label{flex:1;margin:0;font-weight:400;font-size:.9rem;border:1px solid var(--field-line);border-radius:40px;padding:11px 10px;text-align:center;cursor:pointer;background:#fff;transition:all .15s}
+  .seg label:hover{border-color:var(--sage)}
   .seg input{display:none}
-  .seg input:checked+span{color:var(--sage-dark);font-weight:700}
-  .seg label:has(input:checked){background:var(--sage-soft);border-color:var(--sage)}
-  .slots{display:grid;grid-template-columns:repeat(auto-fill,minmax(92px,1fr));gap:8px}
-  .slot{border:1px solid var(--line);background:#fff;border-radius:8px;padding:9px 4px;font:inherit;font-size:.9rem;cursor:pointer;color:inherit}
-  .slot:hover:not(:disabled){border-color:var(--sage)}
-  .slot.sel{background:var(--sage);border-color:var(--sage);color:#fff;font-weight:600}
-  .slot:disabled{background:#f1f1ef;color:#aaa;text-decoration:line-through;cursor:not-allowed}
-  .hint{font-size:.82rem;color:#6b726d;margin:6px 0 0}
-  .check{display:flex;gap:10px;align-items:flex-start;font-size:.88rem;margin:6px 0 18px}
-  .check input{width:auto;margin-top:4px}
-  button.submit{width:100%;background:var(--sage-dark);color:#fff;border:0;border-radius:10px;padding:14px;font:inherit;font-weight:600;font-size:1rem;cursor:pointer}
-  button.submit:hover:not(:disabled){background:var(--charcoal)}
-  button.submit:disabled{opacity:.6;cursor:wait}
-  .banner{display:none;background:#fbeceb;border:1px solid #e8b9b5;color:var(--err);padding:11px 13px;border-radius:8px;margin-bottom:16px;font-size:.9rem}
-  .demo{background:#fff6e8;border:1px solid #ecd2a6;color:#7a5a1f;padding:9px 12px;border-radius:8px;font-size:.82rem;margin-bottom:16px;display:none}
-  .done{display:none;text-align:center;padding:44px 24px}
-  .done .tick{width:60px;height:60px;border-radius:50%;background:var(--sage-soft);color:var(--sage-dark);display:grid;place-items:center;font-size:30px;margin:0 auto 14px}
-  .done dl{display:inline-block;text-align:left;margin:16px 0 0;font-size:.95rem}
-  .done dt{font-weight:600;color:var(--sage-dark);font-size:.8rem;text-transform:uppercase;letter-spacing:.05em}
-  .done dd{margin:0 0 8px}
+  .seg input:checked+span{color:var(--sage-deep);font-weight:600}
+  .seg label:has(input:checked){background:var(--sage-soft);border-color:var(--sage-deep)}
+
+  .slots{display:grid;grid-template-columns:repeat(auto-fill,minmax(98px,1fr));gap:8px}
+  .slot{border:1px solid var(--field-line);background:#fff;border-radius:40px;padding:10px 6px;font:inherit;font-weight:400;font-size:.88rem;letter-spacing:.02em;cursor:pointer;color:var(--ink);transition:all .15s}
+  .slot:hover:not(:disabled){border-color:var(--sage-deep);background:var(--mist)}
+  .slot.sel,.slot.sel:hover:not(:disabled){background:var(--sage-deep);border-color:var(--sage-deep);color:#fff;font-weight:500}
+  .slot:disabled{background:#F3F3F0;color:#B2B6B1;text-decoration:line-through;cursor:not-allowed}
+  .hint{font-size:.8rem;color:var(--muted);margin:7px 0 0}
+
+  .check{display:flex;gap:12px;align-items:flex-start;font-size:.85rem;font-weight:300;letter-spacing:0;margin:8px 0 6px;cursor:pointer}
+  .check input{width:auto;margin-top:5px;accent-color:var(--sage-deep);flex:none}
+
+  .cta{width:100%;display:flex;align-items:center;justify-content:center;gap:12px;background:var(--sage-deep);color:#fff;border:0;border-radius:40px;padding:17px 24px;font:inherit;font-weight:500;font-size:.82rem;letter-spacing:.24em;text-transform:uppercase;cursor:pointer;transition:background .2s,transform .2s;margin-top:10px}
+  .cta .arr{transition:transform .2s}
+  .cta:hover:not(:disabled){background:var(--forest)}
+  .cta:hover:not(:disabled) .arr{transform:translateX(4px)}
+  .cta:disabled{opacity:.6;cursor:wait}
+  .fine{text-align:center;margin-top:14px}
+
+  .banner{display:none;background:#FBEFEE;border:1px solid #EBC3BF;color:var(--err);padding:12px 15px;border-radius:14px;margin-bottom:18px;font-size:.9rem;font-weight:400}
+  .demo{background:#FFF6E8;border:1px solid #ECD2A6;color:#7A5A1F;padding:10px 14px;border-radius:14px;font-size:.82rem;margin-bottom:18px;display:none}
+
+  .done{display:none;text-align:center;padding:52px 28px}
+  .done .tick{width:66px;height:66px;border-radius:50%;background:linear-gradient(135deg,#9CAA97,var(--sage-deep));color:#fff;display:grid;place-items:center;font-size:30px;margin:0 auto 18px}
+  .done h2{margin:0;font-weight:300;font-size:1.7rem;letter-spacing:.03em}
+  .done p{margin:8px 0 0;color:var(--muted)}
+  .done dl{display:inline-block;text-align:left;margin:22px 0 0;padding:16px 22px;background:var(--mist);border-radius:16px;font-size:.95rem}
+  .done dt{font-weight:500;color:var(--bronze);font-size:.66rem;text-transform:uppercase;letter-spacing:.26em}
+  .done dd{margin:2px 0 12px;font-weight:400}
+  .done dd:last-child{margin-bottom:0}
+  .again{background:#fff;border:1px solid var(--field-line);border-radius:40px;padding:12px 26px;font:inherit;font-size:.78rem;font-weight:500;letter-spacing:.22em;text-transform:uppercase;cursor:pointer;color:var(--sage-deep)}
+  .again:hover{background:var(--mist);border-color:var(--sage-deep)}
+
+  footer.legal{width:100%;max-width:640px;margin-top:28px;text-align:center;font-size:.74rem;color:var(--muted);line-height:1.6}
   .hp{position:absolute;left:-9999px}
+  @media(prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
 </style>
 </head>
 <body>
-<header>
-  <h1>REFLECT AESTHETICS</h1>
-  <p>Refined in every reflection</p>
-</header>
+<a class="skip" href="#form">Skip to the booking form</a>
 
-<main>
-  <form id="form" novalidate>
-    <div class="demo" id="demo">NOT CONNECTED: Supabase isn't configured yet, so requests are NOT saved. Set <code>SUPABASE_URL</code> and <code>SUPABASE_ANON_KEY</code> in the script.</div>
-    <div class="banner" id="banner" role="alert"></div>
-
-    <h2>Your details</h2>
-    <div class="row">
-      <div class="field"><label class="req" for="first">First name</label><input id="first" autocomplete="given-name" required><div class="err">Please enter your first name.</div></div>
-      <div class="field"><label class="req" for="last">Last name</label><input id="last" autocomplete="family-name" required><div class="err">Please enter your last name.</div></div>
-    </div>
-    <div class="row">
-      <div class="field"><label class="req" for="phone">Mobile number</label><input id="phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="09XX XXX XXXX" required><div class="err">Enter a valid PH mobile number (e.g. 09171234567).</div></div>
-      <div class="field"><label for="email">Email <span style="font-weight:400">(optional)</span></label><input id="email" type="email" autocomplete="email"><div class="err">Please enter a valid email.</div></div>
-    </div>
-    <div class="field">
-      <label>Have you visited us before?</label>
-      <div class="seg">
-        <label><input type="radio" name="ptype" value="new" checked><span>First visit</span></label>
-        <label><input type="radio" name="ptype" value="returning"><span>Returning patient</span></label>
+<div class="shell">
+  <aside class="story">
+    <div class="lockup">
+      <div class="wm-wrap" role="img" aria-label="Reflect">
+        <div class="wm" aria-hidden="true"><span>R</span><span>E</span><span>F</span><span class="l">L</span><span class="m">E</span><span class="m">C</span><span class="s">T</span></div>
+        <div class="wm refl" aria-hidden="true"><span>R</span><span>E</span><span>F</span><span class="l">L</span><span class="m">E</span><span class="m">C</span><span class="s">T</span></div>
       </div>
+      <div class="sub">Aesthetics</div>
+      <div class="by">By KenRomeroMD</div>
     </div>
 
-    <h2>Appointment</h2>
-    <div class="field">
-      <label class="req" for="service">Service</label>
-      <select id="service" required><option value="">Select a service…</option></select>
-      <p class="hint" id="svcHint"></p>
-      <div class="err">Please choose a service.</div>
+    <div class="eyebrow">Book a consultation</div>
+    <h1>Refined in every <em>reflection.</em></h1>
+    <p class="lede">Personalized aesthetic care by Dr. Ken Romero. Tell us what you would like to talk about and choose a time. The clinic will confirm your appointment personally.</p>
+
+    <ul class="values">
+      <li><b>01</b>Personalized care</li>
+      <li><b>02</b>Thoughtful approach</li>
+      <li><b>03</b>Private experience</li>
+      <li><b>04</b>Natural-looking results</li>
+    </ul>
+
+    <div class="visit">
+      <h2>Visit the clinic</h2>
+      <p>273 2nd Floor, R.L. Building, Sto. Rosario, San Jose, Angeles City, Pampanga 2009</p>
+      <p>Monday to Sunday, 11:00 AM – 8:00 PM, by appointment</p>
+      <p><a href="tel:+639773416110">0977 341 6110</a></p>
+      <div class="tag">Refined in every reflection</div>
     </div>
-    <div class="field">
-      <label class="req" for="date">Preferred date</label>
-      <input id="date" type="date" required>
-      <div class="err" id="dateErr">Please pick an available date.</div>
-    </div>
-    <div class="field" id="slotField">
-      <label class="req">Preferred time</label>
-      <div class="slots" id="slots"></div>
-      <p class="hint" id="slotHint">Choose a date to see available times.</p>
-      <div class="err">Please select a time.</div>
-    </div>
-    <div class="field">
-      <label for="notes">Notes <span style="font-weight:400">(allergies, concerns, questions)</span></label>
-      <textarea id="notes" maxlength="500"></textarea>
+  </aside>
+
+  <main>
+    <div class="panel">
+      <div class="intro">
+        <div class="eyebrow dark">Appointment request</div>
+        <h2>Reserve your visit</h2>
+        <p>It takes about a minute. Nothing is booked until the clinic confirms.</p>
+      </div>
+
+      <form id="form" novalidate>
+        <div class="demo" id="demo">NOT CONNECTED: Supabase isn't configured yet, so requests are NOT saved. Set <code>SUPABASE_URL</code> and <code>SUPABASE_ANON_KEY</code> in the script.</div>
+        <div class="banner" id="banner" role="alert"></div>
+
+        <div class="sec first"><span class="n">01</span><h3>Your details</h3></div>
+        <div class="row">
+          <div class="field"><label class="req" for="first">First name</label><input id="first" autocomplete="given-name" required><div class="err">Please enter your first name.</div></div>
+          <div class="field"><label class="req" for="last">Last name</label><input id="last" autocomplete="family-name" required><div class="err">Please enter your last name.</div></div>
+        </div>
+        <div class="row">
+          <div class="field"><label class="req" for="phone">Mobile number</label><input id="phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="09XX XXX XXXX" required><div class="err">Enter a valid PH mobile number (e.g. 09171234567).</div></div>
+          <div class="field"><label for="email">Email <span class="opt">(optional)</span></label><input id="email" type="email" autocomplete="email"><div class="err">Please enter a valid email.</div></div>
+        </div>
+        <div class="field">
+          <label>Have you visited us before?</label>
+          <div class="seg">
+            <label><input type="radio" name="ptype" value="new" checked><span>First visit</span></label>
+            <label><input type="radio" name="ptype" value="returning"><span>Returning patient</span></label>
+          </div>
+        </div>
+
+        <div class="sec"><span class="n">02</span><h3>Appointment</h3></div>
+        <div class="field">
+          <label class="req" for="service">Service</label>
+          <select id="service" required><option value="">Select a service…</option></select>
+          <p class="hint" id="svcHint"></p>
+          <div class="err">Please choose a service.</div>
+        </div>
+        <div class="field">
+          <label class="req" for="date">Preferred date</label>
+          <input id="date" type="date" required>
+          <div class="err" id="dateErr">Please pick an available date.</div>
+        </div>
+        <div class="field" id="slotField">
+          <label class="req">Preferred time</label>
+          <div class="slots" id="slots"></div>
+          <p class="hint" id="slotHint">Choose a date to see available times.</p>
+          <div class="err">Please select a time.</div>
+        </div>
+        <div class="field">
+          <label for="notes">Notes <span class="opt">(allergies, concerns, questions)</span></label>
+          <textarea id="notes" maxlength="500"></textarea>
+        </div>
+
+        <input class="hp" id="website" tabindex="-1" autocomplete="off" aria-hidden="true">
+
+        <label class="check"><input type="checkbox" id="consent" required>
+          <span>I agree to be contacted by the clinic to confirm this appointment and that my details may be stored for that purpose.</span></label>
+        <div class="field" id="consentField"><div class="err">Please accept to continue.</div></div>
+
+        <button class="cta" id="submitBtn" type="submit">Request appointment</button>
+        <p class="hint fine">Your request is pending until the clinic confirms it by call, text or email.</p>
+      </form>
+
+      <section class="done" id="done" aria-live="polite">
+        <div class="tick">✓</div>
+        <h2>Request received</h2>
+        <p>Thank you, <span id="dName"></span>. We'll contact you shortly to confirm.</p>
+        <dl>
+          <dt>Service</dt><dd id="dService"></dd>
+          <dt>Date &amp; time</dt><dd id="dWhen"></dd>
+        </dl>
+        <p style="margin-top:22px"><button class="again" id="again" type="button">Book another</button></p>
+      </section>
     </div>
 
-    <input class="hp" id="website" tabindex="-1" autocomplete="off" aria-hidden="true">
-
-    <label class="check"><input type="checkbox" id="consent" required>
-      <span>I agree to be contacted by the clinic to confirm this appointment and that my details may be stored for that purpose.</span></label>
-    <div class="field" id="consentField"><div class="err">Please accept to continue.</div></div>
-
-    <button class="submit" id="submitBtn" type="submit">Request appointment</button>
-    <p class="hint" style="text-align:center;margin-top:12px">Your request is pending until the clinic confirms it by call, text or email.</p>
-  </form>
-
-  <section class="done" id="done" aria-live="polite">
-    <div class="tick">✓</div>
-    <h2 style="margin:0;color:var(--charcoal);font-size:1.3rem;text-transform:none;letter-spacing:0">Request received</h2>
-    <p style="margin:6px 0 0">Thank you, <span id="dName"></span>. We'll contact you shortly to confirm.</p>
-    <dl>
-      <dt>Service</dt><dd id="dService"></dd>
-      <dt>Date &amp; time</dt><dd id="dWhen"></dd>
-    </dl>
-    <p><button class="slot" id="again" type="button" style="padding:10px 18px">Book another</button></p>
-  </section>
-</main>
+    <footer class="legal">
+      This form is a request, not a confirmed booking. Information on this page does not replace a consultation with your doctor; results vary and suitability is decided after an individual assessment.
+    </footer>
+  </main>
+</div>
 
 <script>
 /* ============ CONFIG: edit these ============ */
@@ -147,10 +283,11 @@ const CONFIG = {
     "Slimming / Body Contouring",
     "Other"
   ],
-  OPEN_HOUR: 9,          // first slot
-  CLOSE_HOUR: 17,        // last slot ends here
-  SLOT_MINUTES: 60,
-  CLOSED_WEEKDAYS: [0],  // 0 = Sunday ... 6 = Saturday
+  // Same hours as reflectaestheticsph.com: Monday to Sunday, 11 AM to 8 PM.
+  OPEN_HOUR: 11,         // first slot
+  CLOSE_HOUR: 20,        // last slot ends here
+  SLOT_MINUTES: 60,      // keep equal to slotMinutes in the clinic app
+  CLOSED_WEEKDAYS: [],   // 0 = Sunday ... 6 = Saturday, e.g. [0] to close Sundays
   MAX_DAYS_AHEAD: 60
 };
 /* ============================================ */
@@ -160,6 +297,10 @@ const configured = CONFIG.SUPABASE_URL && CONFIG.SUPABASE_ANON_KEY;
 // tolerate pasted paths such as ".../rest/v1/": keep only the project address
 const BASE = (() => { try { return new URL(CONFIG.SUPABASE_URL).origin; } catch(e){ return CONFIG.SUPABASE_URL; } })();
 let selectedTime = null;
+
+// button label (the arrow is added with the text so the "Sending…" state can swap it)
+const SUBMIT_HTML = 'Request appointment <span class="arr" aria-hidden="true">→</span>';
+$("submitBtn").innerHTML = SUBMIT_HTML;
 
 if(!configured) $("demo").style.display = "block";
 let serviceInfo = {};
@@ -181,7 +322,7 @@ const maxDate = new Date(); maxDate.setDate(maxDate.getDate()+CONFIG.MAX_DAYS_AH
 $("date").min = iso(tomorrow); $("date").max = iso(maxDate);
 
 function allSlots(){
-  const out=[]; 
+  const out=[];
   for(let m=CONFIG.OPEN_HOUR*60; m+CONFIG.SLOT_MINUTES<=CONFIG.CLOSE_HOUR*60; m+=CONFIG.SLOT_MINUTES)
     out.push(`${pad(Math.floor(m/60))}:${pad(m%60)}`);
   return out;
@@ -324,7 +465,7 @@ $("form").addEventListener("submit", async e=>{
     if(/taken/.test(err.message)) loadSlots();
     $("banner").scrollIntoView({behavior:"smooth",block:"center"});
   }finally{
-    btn.disabled=false; btn.textContent="Request appointment";
+    btn.disabled=false; btn.innerHTML=SUBMIT_HTML;
   }
 });
 
